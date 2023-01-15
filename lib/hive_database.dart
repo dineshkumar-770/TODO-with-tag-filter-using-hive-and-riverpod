@@ -8,25 +8,36 @@ class HiveDataBase {
   final _notesBox = Hive.box(boxName);
 
   Future addNotes({required DataModel notesData}) async {
-    if (fetchNotes() != null) {
-      List prevNotes = await fetchNotes();
+    var data = await _notesBox.get('notes');
+    if (data != null) {
+      List prevNotes = data;
       prevNotes.add(notesData);
       List updatedList = prevNotes;
       await _notesBox.put('notes', updatedList);
       log('Data list me daal diya');
+    } else {
+      await _notesBox.put('notes', [notesData]);
     }
   }
 
   Future fetchNotes() async {
     var data = await _notesBox.get('notes');
-    log(data.toString());
-    return data;
+    if (data != null) {
+      log(data.toString());
+      return data;
+    } else {
+      return [];
+    }
   }
 
   Future deleteData({required int index}) async {
-    List newList = await _notesBox.get('notes');
-    newList.removeAt(index);
-    List updatedList = newList;
-    await _notesBox.put('notes', newList);
+    var data = await _notesBox.get('notes');
+    if (data != null) {
+      List newList = data;
+      newList.removeAt(index);
+      List updatedList = newList;
+      await _notesBox.put('notes', newList);
+    }
   }
 }
+
