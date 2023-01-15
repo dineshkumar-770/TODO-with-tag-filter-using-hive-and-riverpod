@@ -25,6 +25,7 @@ class _WithRiverpodState extends State<WithRiverpod> {
     // TODO: implement initState
     super.initState();
     _hiveDataBase = HiveDataBase();
+    mainDropDownValue = "All";
   }
 
   @override
@@ -100,28 +101,21 @@ class _WithRiverpodState extends State<WithRiverpod> {
             String dropDownValue = ref.watch(tagSelector.notifier).state;
             return dataDp.when(
               data: (data) {
-                print('>>>>>>>>>>>>>${data.length}');
+                final filteredData = data.where((item) => item.tag == mainDropDownValue || mainDropDownValue == "All").toList();
                 return Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: DropdownButtonFormField(
                         hint: Text(mainDropDownValue ?? 'All'),
-                        items: <String>[
-                          'All',
-                          'Cool',
-                          'Sexy',
-                          'Chill',
-                          'Angry',
-                          'Fucker'
-                        ]
+                        items: <String>['All', '😎', '😍', '🥶', '🤬', '🫡']
                             .map((value) => DropdownMenuItem(
                                 value: value, child: Text(value)))
                             .toList(),
                         onChanged: (value) {
                           dropDownValue = value!;
                           mainDropDownValue = dropDownValue;
-                          ref.refresh(popUpTagSelector.notifier).state;
+                          ref.refresh(tagSelector.notifier).state = value;
                         },
                       ),
                     ),
@@ -132,17 +126,17 @@ class _WithRiverpodState extends State<WithRiverpod> {
                           )
                         : Expanded(
                             child: ListView.builder(
-                              itemCount: data.length,
+                              itemCount: filteredData.length,
                               itemBuilder: (context, index) {
                                 return ListTile(
                                   leading: CircleAvatar(
                                     child: Center(
-                                      child: Text(data[index].tag.toString()),
+                                      child: Text(filteredData[index].tag.toString()),
                                     ),
                                   ),
-                                  title: Text(data[index].title),
+                                  title: Text(filteredData[index].title),
                                   subtitle:
-                                      Text(data[index].description.toString()),
+                                      Text(filteredData[index].description.toString()),
                                   trailing: IconButton(
                                       onPressed: () {
                                         _hiveDataBase
