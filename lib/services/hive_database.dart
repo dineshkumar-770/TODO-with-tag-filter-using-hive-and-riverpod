@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:hive_demo_todo/data/data_model.dart';
 import 'package:hive_demo_todo/main.dart';
+import 'package:hive_demo_todo/model/data_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class HiveDataBase {
@@ -14,7 +14,6 @@ class HiveDataBase {
       prevNotes.add(notesData);
       List updatedList = prevNotes;
       await _notesBox.put('notes', updatedList);
-      log('Data list me daal diya');
     } else {
       await _notesBox.put('notes', [notesData]);
     }
@@ -30,6 +29,20 @@ class HiveDataBase {
     }
   }
 
+  Future updateNotes({required int index, required DataModel dataModel}) async {
+    var data = await _notesBox.get('notes');
+    if (data != null) {
+      List fetchedlist = data;
+      fetchedlist.removeAt(index);
+      List newUpdatedList = fetchedlist;
+      newUpdatedList.insert(index, dataModel);
+      List finalList = newUpdatedList;
+      await _notesBox.put('notes', finalList);
+    } else {
+      return;
+    }
+  }
+
   Future deleteData({required int index}) async {
     var data = await _notesBox.get('notes');
     if (data != null) {
@@ -40,4 +53,3 @@ class HiveDataBase {
     }
   }
 }
-

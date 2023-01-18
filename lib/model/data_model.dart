@@ -13,12 +13,14 @@ class DataModel {
 
   @HiveField(2)
   String? description;
-  
+
+  @HiveField(3)
+  DateTime? createdAt;
+
   DataModel({
     this.tag,
     this.title,
     this.description,
+    this.createdAt
   });
-  
-  
 }
